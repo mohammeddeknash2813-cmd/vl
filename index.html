@@ -5,7 +5,18 @@
       src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js">
     </script>
     <style>
-      body { margin:0; overflow:hidden; }
+      body { margin:0; overflow:hidden; font-family:sans-serif; }
+      
+      #cameraFeed {
+        position: fixed;
+        top:0;
+        left:0;
+        width:100vw;
+        height:100vh;
+        object-fit: cover;
+        z-index: -1; /* behind everything */
+      }
+
       #ar-button {
         position: fixed;
         bottom: 20px;
@@ -20,23 +31,30 @@
         z-index: 1000;
         cursor: pointer;
       }
+
       #instructions {
         position: fixed;
         top: 20px;
         left: 50%;
         transform: translateX(-50%);
-        font-size: 18px;
+        font-size: 16px;
         color: #ff0000;
-        background-color: rgba(255,255,255,0.8);
-        padding: 5px 10px;
+        background-color: rgba(255,255,255,0.85);
+        padding: 8px 12px;
         border-radius: 5px;
         z-index: 1000;
+        text-align: center;
       }
     </style>
   </head>
 
   <body>
-    <div id="instructions">Tap the button below to place Hello World in AR</div>
+    <video id="cameraFeed" autoplay playsinline></video>
+
+    <div id="instructions">
+      iPhone: Use Safari, tap the AR button, ensure enough light.<br>
+      Android: Use Chrome on ARCore-supported device.
+    </div>
 
     <model-viewer
       id="mv"
@@ -53,5 +71,18 @@
     <button id="ar-button" onclick="document.querySelector('#mv').enterAR();">
       View in AR
     </button>
+
+    <script>
+      // Request camera feed
+      async function startCamera() {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+          document.getElementById('cameraFeed').srcObject = stream;
+        } catch(e) {
+          console.log('Camera not available or permission denied', e);
+        }
+      }
+      startCamera();
+    </script>
   </body>
 </html>
