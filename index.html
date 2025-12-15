@@ -1,63 +1,96 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <script type="module"
-      src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js">
-    </script>
-    <style>
-      body { margin:0; overflow:hidden; font-family:sans-serif; }
-      
-      #ar-button {
-        position: fixed;
-        bottom: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        padding: 15px 25px;
-        font-size: 20px;
-        background-color: #007bff;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        z-index: 1000;
-        cursor: pointer;
-      }
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <title>AR Hello World</title>
 
-      #instructions {
-        position: fixed;
-        top: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        font-size: 16px;
-        color: #ff0000;
-        background-color: rgba(255,255,255,0.85);
-        padding: 8px 12px;
-        border-radius: 5px;
-        z-index: 1000;
-        text-align: center;
-      }
-    </style>
-  </head>
+  <script type="module"
+    src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js">
+  </script>
 
-  <body>
-    <div id="instructions">
-      iPhone: Use Safari and tap the button below.<br>
-      Android: Use Chrome on an ARCore-supported device.
-    </div>
+  <style>
+    body {
+      margin: 0;
+      background: #000;
+      font-family: system-ui, sans-serif;
+    }
 
-    <model-viewer
-      id="mv"
-      src="hello_world.glb"
-      ios-src="hello_world.usdz"
-      ar
-      ar-modes="scene-viewer quick-look webxr"
-      camera-controls
-      ar-scale="auto"
-      scale="0.01 0.01 0.01"
-      style="width:100vw; height:100vh;">
-    </model-viewer>
+    model-viewer {
+      width: 100vw;
+      height: 100vh;
+    }
 
-    <button id="ar-button" onclick="document.querySelector('#mv').enterAR();">
-      View in AR
-    </button>
-  </body>
+    /* GROTE AR KNOP */
+    #ar-button {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 18px 28px;
+      font-size: 20px;
+      font-weight: 600;
+      background: #1e88ff;
+      color: white;
+      border: none;
+      border-radius: 14px;
+      cursor: pointer;
+      z-index: 1000;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.35);
+    }
+
+    #hint {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255,255,255,0.9);
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 15px;
+      z-index: 1000;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+
+<div id="hint">
+  Tik op <b>View in AR</b> en geef cameratoegang
+</div>
+
+<model-viewer
+  id="viewer"
+  src="hello_world.glb"
+  ios-src="hello_world.usdz"
+  ar
+  ar-modes="webxr scene-viewer quick-look"
+  camera-controls
+  ar-scale="auto"
+  scale="0.01 0.01 0.01"
+  exposure="1"
+  shadow-intensity="1">
+</model-viewer>
+
+<button id="ar-button">View in AR</button>
+
+<script>
+  const viewer = document.getElementById("viewer");
+  const button = document.getElementById("ar-button");
+
+  button.addEventListener("click", async () => {
+    // Force AR via model-viewer
+    try {
+      await viewer.activateAR();
+    } catch (e) {
+      alert(
+        "AR niet beschikbaar op dit toestel of deze browser.\n\n" +
+        "iPhone: gebruik Safari\n" +
+        "Samsung: gebruik een browser met AR-ondersteuning"
+      );
+    }
+  });
+</script>
+
+</body>
 </html>
